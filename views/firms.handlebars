@@ -1,0 +1,330 @@
+<div class="pull-left">
+  <button type="button" class="btn btn-primary" data-toggle="modal" data-target="#firm-form-modal">
+    <span class="glyphicon glyphicon-plus"></span>
+    Зарегистрировать
+  </button>
+  <button type="button" class="btn btn-danger">
+    <span class="glyphicon glyphicon-minus"></span>
+    Удалить
+  </button>
+</div>
+
+<table id="firm_table">
+</table>
+
+<div id="firm-form-modal" class="modal fade" tabindex="-1" role="dialog">
+  <div class="modal-dialog">
+    <div class="modal-content">
+      <div class="modal-header">
+        <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+        <h4 class="modal-title"></h4>
+      </div>
+
+      <div class="modal-body">
+
+          <form class="form-firm form-horizontal">
+
+            <div class="form-group">
+              <label for="region_id" class="col-sm-2 control-label">Тип</label>
+              <div class="col-sm-10">
+                <select class="form-control firm-type-select" name="type">
+                  <option value="0">ИП</option>
+                  <option value="1">ООО</option>
+                  <option value="2">МУП</option>
+                </select>
+              </div>
+            </div>
+
+            <div class="form-group citizen-data">
+              <input type="hidden" class="form-control card_id" name="card_id"> 
+              <label for="card_id" class="col-sm-2 control-label">Основатель</label>
+              <div class="col-sm-4">
+                <input type="text" class="form-control account_number" name="account_number" placeholder="Номер л.с.">
+              </div>
+              <div class="col-sm-3">
+                <input type="text" class="form-control cofounder_share" name="cofounder_share" placeholder="Доля в %">
+              </div>
+              <div class="col-sm-3">
+                <button type="button" class="btn btn-success read-card" data-target=".card_id"><span class="glyphicon glyphicon-import"></span></button>
+
+                <button type="button" class="btn btn-danger remove-citizen-data" style="display:none;"><span class="glyphicon glyphicon-minus"></span></button>
+              </div>
+
+              <p class="help-block citizen-help-name" style="display:none;">
+                <span class="label label-success">
+                  
+                </span>
+              </p>
+            </div>
+
+            <div class="form-group citizen-data" style="display:none;">
+              <input type="hidden" class="form-control card_id" name="card_id"> 
+              <label for="card_id" class="col-sm-2 control-label">Основатель2</label>
+              <div class="col-sm-4">
+                <input type="text" class="form-control account_number" name="account_number" placeholder="Номер л.с.">
+              </div>
+              <div class="col-sm-3">
+                <input type="text" class="form-control cofounder_share" name="cofounder_share" placeholder="Доля в %">
+              </div>
+              <div class="col-sm-3">
+                <button type="button" class="btn btn-success read-card" data-target=".card_id"><span class="glyphicon glyphicon-import"></span></button>
+
+                <button type="button" class="btn btn-danger remove-citizen-data" style="display:none;"><span class="glyphicon glyphicon-minus"></span></button>
+              </div>
+
+              <p class="help-block citizen-help-name" style="display:none;">
+                <span class="label label-success">
+                  
+                </span>
+              </p>
+            </div>
+
+            <div class="form-group citizen-data" style="display:none;">
+              <input type="hidden" class="form-control card_id" name="card_id"> 
+              <label for="card_id" class="col-sm-2 control-label">Основатель3</label>
+              <div class="col-sm-4">
+                <input type="text" class="form-control account_number" name="account_number" placeholder="Номер л.с.">
+              </div>
+              <div class="col-sm-3">
+                <input type="text" class="form-control cofounder_share" name="cofounder_share" placeholder="Доля в %">
+              </div>
+              <div class="col-sm-3">
+                <button type="button" class="btn btn-success read-card" data-target=".card_id"><span class="glyphicon glyphicon-import"></span></button>
+
+                <button type="button" class="btn btn-danger remove-citizen-data" style="display:none;"><span class="glyphicon glyphicon-minus"></span></button>
+              </div>
+
+              <p class="help-block citizen-help-name" style="display:none;">
+                <span class="label label-success">
+                </span>
+              </p>
+            </div>
+
+            <div class="form-group citizen-data" style="display:none;">
+              <input type="hidden" class="form-control card_id" name="card_id"> 
+              <label for="card_id" class="col-sm-2 control-label">Основатель4</label>
+              <div class="col-sm-4">
+                <input type="text" class="form-control account_number" name="account_number" placeholder="Номер л.с.">
+              </div>
+              <div class="col-sm-3">
+                <input type="text" class="form-control cofounder_share" name="cofounder_share" placeholder="Доля в %">
+              </div>
+              <div class="col-sm-3">
+                <button type="button" class="btn btn-success read-card" data-target=".card_id"><span class="glyphicon glyphicon-import"></span></button>
+
+                <button type="button" class="btn btn-danger remove-citizen-data" style="display:none;"><span class="glyphicon glyphicon-minus"></span></button>
+              </div>
+
+              <p class="help-block citizen-help-name" style="display:none;">
+                <span class="label label-success">
+                  
+                </span>
+              </p>
+            </div>
+
+            <div class="form-group citizen-data" style="display:none;">
+              <input type="hidden" class="form-control card_id" name="card_id"> 
+              <label for="card_id" class="col-sm-2 control-label">Основатель5</label>
+              <div class="col-sm-4">
+                <input type="text" class="form-control account_number" name="account_number" placeholder="Номер л.с.">
+              </div>
+              <div class="col-sm-3">
+                <input type="text" class="form-control cofounder_share" name="cofounder_share" placeholder="Доля в %">
+              </div>
+              <div class="col-sm-3">
+                <button type="button" class="btn btn-success read-card" data-target=".card_id"><span class="glyphicon glyphicon-import"></span></button>
+
+                <button type="button" class="btn btn-danger remove-citizen-data" style="display:none;"><span class="glyphicon glyphicon-minus"></span></button>
+              </div>
+
+              <p class="help-block citizen-help-name" style="display:none;">
+                <span class="label label-success">
+                  
+                </span>
+              </p>
+            </div>
+
+
+
+            <div class="form-group">
+              <label for="name" class="col-sm-2 control-label">Название</label>
+              <div class="col-sm-10">
+                <input type="text" class="form-control" name="name">
+              </div>
+            </div>
+
+            <div class="form-group">
+              <label for="region_id" class="col-sm-2 control-label">Регион</label>
+              <div class="col-sm-10">
+                <select class="form-control" name="region_id">
+                  {{#each regions}}
+                  <option value="{{id}}">{{name}}</option>
+                  {{/each}}
+                </select>
+              </div>
+            </div>
+
+
+          </form>
+
+      </div>
+
+      <div class="modal-footer">
+        <button type="button" class="btn btn-default" data-dismiss="modal">Закрыть</button>
+        <button type="button" class="btn btn-primary" id="firm-save">Сохранить</button>
+      </div>
+    </div><!-- /.modal-content -->
+  </div><!-- /.modal-dialog -->
+</div><!-- /.modal -->
+<script>
+  $('#firm_table').bootstrapTable({
+    search: true,
+
+    showRefresh: true,
+    showExport: true,
+
+    maintainSelected: true,
+    clickToSelect: true,
+    singleSelect: false,
+    pagination: true,
+    idField: 'id',
+    columns: [
+      { field: 'id',
+        title: '',
+        checkbox: true },
+      { field: 'name',
+        title: 'Название',
+        formatter: function(value, row, index) {
+          if( row.type == 0 )
+            return 'ИП "' + value + '"';
+          if( row.type == 1 )
+            return 'ООО "' + value + '"';
+          if( row.type == 2 )
+            return 'МУП "' + value + '"';
+        }
+      },
+      { field: 'region_name',
+        title: 'Регион' },
+      { field: 'region_currency',
+        title: 'Валюта' },
+      { field: 'account',
+        title: 'На счету' },
+      { field: 'cofounders',
+        title: 'Соучредители',
+        formatter: function(value, row, index) {
+          return '<ul>' + value.split(';;;').map(function(cof) {
+            return '<li>' + cof + '</li>';
+          }).join(' ') + '</ul>';
+        }
+      }
+    ],
+    url: '/firms/list'
+  });
+
+  var validateForm = function() {
+    var share_sum = $('input.cofounder_share').map(function(i, item) { 
+      return item.value; 
+      })
+      .toArray()
+      .reduce(function(accum, share) { 
+        return accum = parseInt(accum) + parseInt(share || 0); 
+      });
+
+    return !isNaN(parseInt(share_sum)) && share_sum == 100;
+  };
+
+  var selectFirmCofounder = function(e) {
+    var $this = $(this);
+    var firm_type = $('.firm-type-select').val();
+
+    var data = {};
+    if( $this.attr('name') == 'card_id' )
+      data['card_id'] = $this.val();
+    else
+      data['account_number'] = $this.val();
+
+    $.ajax({
+      method: 'GET',
+      url: '/people/find',
+      data: data,
+      success: function(data, textStatus, jqXHR) {
+        $this.parents('.citizen-data')
+          .find('.citizen-help-name')
+          .show()
+          .find('span')
+          .removeClass('label-danger')
+          .addClass('label-success')
+          .text(data.name + ' ' + data.last_name);
+
+        $this.parents('.citizen-data').find('input.account_number').val(data.account_number);
+        $this.parents('.citizen-data').find('input.card_id').val(data.card_id);
+
+        if( firm_type == 1 ) {
+          $this.parents('.citizen-data').next('.citizen-data').show()
+            .find('.remove-citizen-data').show();
+        }
+      },
+      error: function(jqXHR, textStatus, error) {
+        $this.parents('.citizen-data')
+          .find('.citizen-help-name')
+          .show()
+          .find('span')
+          .removeClass('label-success')
+          .addClass('label-danger')
+          .text('Житель не найден');
+      }
+    });
+  }
+
+  $('.citizen-data input.account_number, input.card_id').change(selectFirmCofounder);
+  $('.citizen-data .remove-citizen-data').click(function() {
+    var $this = $(this);
+    $this.parents('.citizen-data')
+      .hide()
+      .find('input')
+      .val(null);
+    $this.parents('.citizen-data')
+      .find('.citizen-help-name').hide().find('span').empty();
+  });
+  $('#firm-save').click(function(e) {
+    e.preventDefault();
+    if( !validateForm() ) {
+      alert('Сумма долей не 100%');
+      return;
+    }
+
+    var form = $('.form-firm');
+    var form_data = form.serializeArray();
+    var data = {};
+    for( var i = 0; i < form_data.length; i++ ) {
+      data[form_data[i].name] = form_data[i].value;
+    }
+    data.cofounders = [];
+    var cofounders = $('.citizen-data');
+
+    cofounders.each(function(i, cofounder) {
+      var card_id = $(cofounder).find('.card_id').val(); 
+      var share = $(cofounder).find('.cofounder_share').val(); 
+      if( card_id )
+        data.cofounders.push({
+          card_id: card_id,
+          share: share
+        });
+    });
+
+    $.ajax({
+      method: 'POST',
+      url: '/firms/insert',
+      data: data,
+      success: function(data, textStatus, jqXHR) {
+        $('#firm-form-modal').modal('hide');
+        form[0].reset();
+        $('#firm_table').bootstrapTable('refresh');
+      },
+      error: function(jqXHR, textStatus, error) {
+        alert(error);
+      }
+    })
+  });
+
+</script>

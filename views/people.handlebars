@@ -1,0 +1,136 @@
+<div class="pull-left">
+  <button type="button" class="btn btn-primary" data-toggle="modal" data-target="#citizen-form-modal">
+    <span class="glyphicon glyphicon-plus"></span>
+    Зарегистрировать
+  </button>
+  <button type="button" class="btn btn-danger">
+    <span class="glyphicon glyphicon-minus"></span>
+    Удалить
+  </button>
+</div>
+
+<table id="people_table">
+</table>
+
+<div id="citizen-form-modal" class="modal fade" tabindex="-1" role="dialog">
+  <div class="modal-dialog">
+    <div class="modal-content">
+      <div class="modal-header">
+        <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+        <h4 class="modal-title"></h4>
+      </div>
+
+      <div class="modal-body">
+
+          <form class="form-citizen form-horizontal">
+
+            <div class="form-group">
+              <label for="card_id" class="col-sm-2 control-label">Карта</label>
+              <div class="col-sm-8">
+                <input type="text" class="form-control" id="card_id" name="card_id" readonly>
+              </div>
+              <div class="col-sm-2">
+                <button type="button" class="btn btn-success read-card" data-target="#card_id"><span class="glyphicon glyphicon-import"></span></button>
+              </div>
+            </div>
+
+            <div class="form-group">
+              <label for="account_number" class="col-sm-2 control-label">Номер л.с</label>
+              <div class="col-sm-10">
+                <input type="text" class="form-control" name="account_number">
+              </div>
+            </div>
+
+            <div class="form-group">
+              <label for="name" class="col-sm-2 control-label">Имя</label>
+              <div class="col-sm-10">
+                <input type="text" class="form-control" name="name">
+              </div>
+            </div>
+
+            <div class="form-group">
+              <label for="last_name" class="col-sm-2 control-label">Фамилия</label>
+              <div class="col-sm-10">
+                <input type="text" class="form-control" name="last_name">
+              </div>
+            </div>
+
+            <div class="form-group">
+              <label for="region_id" class="col-sm-2 control-label">Регион</label>
+              <div class="col-sm-10">
+                <select class="form-control" name="region_id">
+                  {{#each regions}}
+                  <option value="{{id}}">{{name}}</option>
+                  {{/each}}
+                </select>
+              </div>
+            </div>
+
+          </form>
+
+      </div>
+
+      <div class="modal-footer">
+        <button type="button" class="btn btn-default" data-dismiss="modal">Закрыть</button>
+        <button type="button" class="btn btn-primary" id="citizen-save">Сохранить</button>
+      </div>
+    </div><!-- /.modal-content -->
+  </div><!-- /.modal-dialog -->
+</div><!-- /.modal -->
+
+
+<script>
+  $('#people_table').bootstrapTable({
+    search: true,
+
+    showRefresh: true,
+    showExport: true,
+
+    maintainSelected: true,
+    clickToSelect: true,
+    singleSelect: false,
+    pagination: true,
+    idField: 'card_id',
+    columns: [
+      { field: 'card_id',
+        title: '',
+        checkbox: true },
+      { field: 'name',
+        title: 'Имя' },
+      { field: 'last_name',
+        title: 'Фамилия' },
+      { field: 'region_name',
+        title: 'Регион' },
+      { field: 'region_currency',
+        title: 'Валюта' },
+      { field: 'account_number',
+        title: 'Номер лс' },
+      { field: 'account',
+        title: 'На счету' }
+    ],
+    url: '/people/list'
+  });
+
+  $('#citizen-save').click(function() {
+    var form = $('.form-citizen');
+    var form_data = form.serializeArray();
+    var data = {};
+    for( var i = 0; i < form_data.length; i++ ) {
+      data[form_data[i].name] = form_data[i].value;
+    }
+    $.ajax({
+      method: 'POST',
+      url: '/people/insert',
+      data: data,
+      success: function(data, status, jqXHR) {
+        $('#citizen-form-modal').modal('hide');
+        form[0].reset();
+        $('#people_table').bootstrapTable('refresh');
+      },
+      error: function(jqXHR, status, error) {
+        alert(error);
+      }
+    });
+  });
+
+</script>

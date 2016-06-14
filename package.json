@@ -1,0 +1,29 @@
+{
+  "name": "ssg-bank",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "dependencies": {
+    "body-parser": "^1.15.1",
+    "express": "^4.13.4",
+    "express-handlebars": "^3.0.0",
+    "serialport": "^3.1.2",
+    "sqlite3": "^3.1.4",
+    "underscore": "^1.8.3",
+    "websocket": "^1.0.23"
+  },
+  "devDependencies": {},
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/AlexanderPopov/rfid.git"
+  },
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/AlexanderPopov/rfid/issues"
+  },
+  "homepage": "https://github.com/AlexanderPopov/rfid#readme"
+}
