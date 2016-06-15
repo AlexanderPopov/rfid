@@ -27,6 +27,22 @@ Model.prototype.get = function(id, cb) {
 };
 
 Model.prototype.update = function(instance, cb) {
+  var query = 'UPDATE '
+    + this.tableName
+    + ' SET '
+    + this.fields.map((item) => {
+        return item + '=?';
+      }).join(',')
+    + ' WHERE id = ?';
+    var values = this.fields.map((i) => {
+      if( instance[i] !== undefined )
+        return instance[i];
+      if( this.defaults[i] !== undefined )
+        return this.defaults[i];
+      return null;
+    });
+    values.push(instance.id);
+    db.run(query, values, cb);
 };
 
 Model.prototype.insert = function(instance, cb) {

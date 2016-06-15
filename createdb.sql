@@ -2,7 +2,10 @@ DROP TABLE IF EXISTS region;
 CREATE TABLE region (
 	id integer primary key not null, 
 	name text, 
-	currency text
+	currency text,
+	coef real not null default 1.0,
+	PIT real not null default 10.0,
+	ANP real not null default 10.0
 );
 
 DROP TABLE IF EXISTS firm;
@@ -38,4 +41,20 @@ CREATE TABLE firm_citizen (
 	foreign key(firm_id) references firm(id),
 	foreign key(citizen_id) references citizen(id),
 	primary key(citizen_id, firm_id)
+);
+
+DROP TABLE IF EXISTS transact;
+CREATE TABLE transact (
+	id integer primary key not null,
+	sender char(8) null,
+	sender_type integer not null,
+	receiver char(8) null,
+	receiver_type integer not null,
+	dt integer,
+	base_sum real not null,
+	sender_sum real not null,
+	receiver_sum real not null,
+	sender_course real not null,
+	receiver_course read not null,
+	transaction_type integer,
 );

@@ -7,6 +7,7 @@ const bodyParser = require('body-parser')
 var Region = require('./models/region');
 var Citizen = require('./models/citizen');
 var Firm = require('./models/firm');
+var Transaction = require('./models/transaction');
 
 
 app.use(express.static('public'));
@@ -24,7 +25,7 @@ app.get('/', (req, res) => {
     if( err ) {
       res.status(500).send(err);
     } else {
-      res.render('people', {layout: 'main', regions: regions});
+      res.render('firms', {layout: 'main', regions: regions});
     }
   });
 });
@@ -133,6 +134,74 @@ app.post('/firms/insert', (req, res) => {
       });
     }
   });
+});
+
+
+app.post('/transaction/insert', (req, res) => {
+	// !base_sum real not null,
+	// !sender_sum real not null,
+	// receiver_sum real not null,
+	// !sender_course real not null,
+	// !receiver_course read not null,
+  var tr = {};
+  tr.sender = req.body.sender;
+  tr.sender_type = req.body.sender_type;
+  tr.receiver = req.body.receiver;
+  tr.receiver_type = req.body.receiver_type;
+  tr.receiver_sum = parseFloat(req.body.receiver_sum);
+  tr.transaction_type = 0;
+  tr.dt = new Date();
+
+  Citizen.get(tr.sender, function(err, sender) {
+    if( err )
+      res.status(400).send('Не найден отправитель');
+    else {
+      Firm.get(tr.receiver, function(err, receiver) {
+        if( err )
+          res.status(400).send('Не найден получатель');
+        else {
+          Region.get(sender.region_id, function(err, senderRegion) {
+            if( err )
+              res.status(400).send('Не найден регион отправителя');
+            else {
+              Region.get(receiver.region_id, function( err, receiverRegion) {
+                if( err )
+                  res.status(400).send('Не найден регион получателя');
+                else {
+                  tr.sender_course = senderRegion.coef;
+                  tr.receiver_course = receiverRegion.coef;
+                  tr.base_sum = parseFloat((tr.receiver_sum / tr.receiver_course).toFixed(2));
+                  tr.sender_sum = parseFloat((tr.base_sum * tr.sender_course).toFixed(2));
+                  if( tr.base_sum > sender.account ) {
+                    res.status(400).send('Не хватает денег на счёте');
+                    return;
+                  }
+
+                  sender.account = parseFloat((sender.account - tr.base_sum).toFixed(2));
+                  receiver.account = parseFloat((receiver.account + tr.base_sum).toFixed(2));
+
+                  Transaction.insert(tr, function(err, id) {
+                    if( err )
+                      res.status(500).send('Не удалось провести транзакцию');
+                    else {
+                      Citizen.update(sender, function(err) {
+                        if( !err )
+                          Firm.update(receiver, function(err) {
+                            if( !err )
+                              res.send('OK');
+                          });
+                      });
+                    }
+                  });
+                }
+              });
+            }
+          });
+        }
+      });
+    }
+  });
+
 
 });
 

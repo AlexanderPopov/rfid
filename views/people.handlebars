@@ -91,10 +91,9 @@
     singleSelect: false,
     pagination: true,
     idField: 'card_id',
+    pageSize: 200,
+    pageList: [10, 50, 100, 'All'],
     columns: [
-      { field: 'card_id',
-        title: '',
-        checkbox: true },
       { field: 'name',
         title: 'Имя' },
       { field: 'last_name',
@@ -106,7 +105,7 @@
       { field: 'account_number',
         title: 'Номер лс' },
       { field: 'account',
-        title: 'На счету' }
+        title: 'На счету <span class="label label-primary">Своя валюта</span>:<span class="label label-success">Базовая валюта</span>' }
     ],
     url: '/people/list'
   });

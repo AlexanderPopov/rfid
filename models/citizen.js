@@ -41,4 +41,34 @@ Citizen.find = function(card_id, acc_n, cb) {
   });
 }
 
+Citizen.get = function(id, cb) {
+  var query = 'SELECT * FROM ' 
+    + this.tableName 
+    + ' WHERE card_id=$1'
+    + ' LIMIT 1';
+
+  this.db.serialize(() => {
+    this.db.get(query, [id], cb);
+  });
+};
+
+Citizen.update = function(instance, cb) {
+  var query = 'UPDATE '
+    + this.tableName
+    + ' SET '
+    + this.fields.map((item) => {
+        return item + '=?';
+      }).join(',')
+    + ' WHERE card_id = ?';
+    var values = this.fields.map((i) => {
+      if( instance[i] !== undefined )
+        return instance[i];
+      if( this.defaults[i] !== undefined )
+        return this.defaults[i];
+      return null;
+    });
+    values.push(instance.card_id);
+    this.db.run(query, values, cb);
+};
+
 module.exports = Citizen;

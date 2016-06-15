@@ -73,7 +73,7 @@ ssg.cardRequest = function(cb) {
     ssg.getCardCallback = cb;
     ssg.scanner.send(ssg.STATUS.CARDREQUEST);
   } else {
-    alert('Сканер не доступен. Перезагрузите страницу');
+    alert('Сканер не доступен. Проверьте, что он подключен и перезагрузите страницу');
   }
 };
 
