@@ -1,0 +1,192 @@
+<h4>Все операции производятся в базовой валюте!</h4>
+<form class="form-inline">
+  <div>От кого</div>
+  <div class="form-group">
+    <select class="form-control" name="sender_type">
+      <option>---------</option>
+      <option value="0">ИП</option>
+      <option value="1">ООО</option>
+      <option value="2">МУП</option>
+      <option value="10">Частное лицо</option>
+      <option value="100">Бюджет</option>
+    </select>
+  </div>
+
+  <div class="form-group citizen-data" style="display:none;">
+    <input type="hidden" class="form-control card_id" name="card_id"> 
+    <div class="col-sm-9">
+      <input type="text" class="form-control account_number" name="account_number" placeholder="Номер л.с." style="width:100%;">
+      <div class="help-block citizen-help-name" style="display:none;">
+        <span class="label label-success"> </span>
+      </div>
+    </div>
+    <div class="col-sm-3">
+      <button type="button" class="btn btn-success read-card" data-target=".card_id"><span class="glyphicon glyphicon-import"></span></button>
+    </div>
+  </div>
+
+  <div class="form-group firm-data">
+    <div class="col-sm-9">
+      <input type="text" class="form-control account_number" name="account_number" placeholder="Номер счёта" style="width:100%;">
+      <div class="help-block firm-help-name" style="display:none;">
+        <span class="label label-success"> </span>
+      </div>
+    </div>
+  </div>
+
+  <br>
+  <br>
+  <div>Тип</div>
+  <div class="form-group">
+    <select class="form-control" name="transaction_type">
+      <option value="0">Оплата услуг</option>
+      <option value="1">Зарплата МУП</option>
+      <option value="2">Зарплата ООО</option>
+      <option value="3">Выделение из бюджета</option>
+      <option value="4">Перевод частному лицу</option>
+      <option value="5">Налог</option>
+    </select>
+  </div>
+  <div class="form-group">
+    <input type="text" class="form-control" name="sum" placeholder="Сумма перевода" style="width:100%;">
+  </div>
+  <br>
+  <br>
+  <div>Кому</div>
+  <div class="form-group">
+    <select class="form-control" name="receiver_type">
+      <option>---------</option>
+      <option value="0">ИП</option>
+      <option value="1">ООО</option>
+      <option value="2">МУП</option>
+      <option value="10">Частное лицо</option>
+      <option value="100">Бюджет</option>
+    </select>
+  </div>
+  <button type="button" class="btn btn-success send-money"><span class="glyphicon glyphicon-ok"></span> Перевести</button>
+</form>
+
+<div id="receiver_table">
+
+</div>
+
+
+
+<script>
+
+  var selectCitizen = function(e) {
+    var $this = $(this);
+
+    var data = {};
+    if( $this.attr('name') == 'card_id' )
+      data['card_id'] = $this.val();
+    else
+      data['account_number'] = $this.val();
+
+    $.ajax({
+      method: 'GET',
+      url: '/people/find',
+      data: data,
+      success: function(data, textStatus, jqXHR) {
+        $this.parents('.citizen-data')
+          .find('.citizen-help-name')
+          .show()
+          .find('span')
+          .removeClass('label-danger')
+          .addClass('label-success')
+          .text(data.name + ' ' + data.last_name + ': ' + data.account);
+
+        $this.parents('.citizen-data').find('input.account_number').val(data.account_number);
+        $this.parents('.citizen-data').find('input.card_id').val(data.card_id);
+
+      },
+      error: function(jqXHR, textStatus, error) {
+        $this.parents('.citizen-data')
+          .find('.citizen-help-name')
+          .show()
+          .find('span')
+          .removeClass('label-success')
+          .addClass('label-danger')
+          .text('Житель не найден');
+        $('#firm-save').attr('disabled', 'disabled');
+      }
+    });
+  };
+
+  var selectFirm = function(e) {
+    var $this = $(this);
+
+    var data = {};
+    data['account_number'] = $this.val();
+
+    $.ajax({
+      method: 'GET',
+      url: '/firm/find',
+      data: data,
+      success: function(data, textStatus, jqXHR) {
+        $this.parents('.firm-data')
+          .find('.firm-help-name')
+          .show()
+          .find('span')
+          .removeClass('label-danger')
+          .addClass('label-success')
+          .text(data.name + ': ' + data.account);
+
+        $this.parents('.firm-data').find('input.account_number').val(data.account_number);
+      },
+      error: function(jqXHR, textStatus, error) {
+        $this.parents('.firm-data')
+          .find('.firm-help-name')
+          .show()
+          .find('span')
+          .removeClass('label-success')
+          .addClass('label-danger')
+          .text('Фирма не найдена');
+      }
+    });
+  };
+
+  $('.citizen-data input.account_number, input.card_id').change(selectCitizen);
+  $('.firm-data input.account_number').change(selectFirm);
+  $('select[name=sender_type]').change(function(e) {
+    var $this = $(this);
+    var val = $this.val();
+    if (val == 0 || val == 1 || val == 2 ) {
+      $('.citizen-data').hide();
+      $('.firm-data').show();
+    } else if( val == 10 ) {
+      $('.citizen-data').show();
+      $('.firm-data').hide();
+    } else {
+      $('.citizen-data').hide();
+      $('.firm-data').hide();
+    }
+  });
+  $('select[name=receiver_type]').change(function(e) {
+    var $this = $(this);
+    var val = $this.val();
+    var request_url;
+    if (val == 0 || val == 1 || val == 2 ) {
+      request_url = '/firms';
+    } else if( val == 10 ) {
+      request_url = '/people';
+    } else {
+      request_url = null;
+    }
+    if( request_url === null || request_url === undefined ) {
+      $('#receiver_table').empty();
+      return;
+    }
+
+    $.ajax({
+      method: 'GET',
+      url: request_url,
+      success: function(data, textStatus, jqXHR) {
+        $('#receiver_table').html(data).find('.manage-buttons').empty();
+      },
+      error: function(jqXHR, textStatus, error) {
+        alert(err);
+      }
+    });
+  });
+</script>

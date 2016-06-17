@@ -28,23 +28,26 @@
 
     <div class="collapse navbar-collapse" id="bs-example-navbar-collapse-1">
       <ul class="nav navbar-nav">
-        <li><a href="#">
-            <span class="glyphicon glyphicon-transfer" area-hidden="true"></span> 
-            Финансы 
-            </a>
+        <li class="dropdown menu-item active">
+          <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false">
+          <span class="glyphicon glyphicon-transfer"></span> Финансы <span class="caret"></span></a>
+          <ul class="dropdown-menu">
+            <li><a class="menu-transactions" href="#">Все транзакции</a></li>
+            <li><a class="menu-transfer" href="#">Перевод</a></li>
+          </ul>
         </li>
-        <li><a class="menu-people" href="#">
+        <li class="menu-item"><a class="menu-people" href="#">
             <span class="glyphicon glyphicon-user" area-hidden="true"></span> 
             Жители
             </a>
         </li>
-        <li class="active"><a class="menu-firms" href="#">
+        <li class="menu-item"><a class="menu-firms" href="#">
             <span class="glyphicon glyphicon-wrench" area-hidden="true"></span> 
             Фирмы
             </a>
         </li>
-        <li><a href="#"><span class="glyphicon glyphicon-ruble"></span> Бюджет</a></li>
-        <li class="dropdown">
+        <li class="menu-item"><a href="#"><span class="glyphicon glyphicon-ruble"></span> Бюджет</a></li>
+        <li class="dropdown menu-item">
           <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false">
           <span class="glyphicon glyphicon-copy"></span> Налоги <span class="caret"></span></a>
           <ul class="dropdown-menu">
@@ -87,7 +90,7 @@
     ssg.connectToScanner();
     function activeMenu(selector) {
       $('div.navbar-collapse li').removeClass('active');
-      $(selector).parent().addClass('active');
+      $(selector).parents('li.menu-item').addClass('active');
     }
 
     $('.menu-people').click(function(e) {
@@ -111,6 +114,38 @@
       activeMenu('.menu-firms');
       $.ajax({
         url: '/firms',
+        method: 'GET',
+        success: function(data, textStatus, jqXHR) {
+          $('#content').html(data);
+        },
+        error: function(jqXHR, textStatus, error) {
+          alert('Произошла ошибка');
+          console.log( error );
+        }
+      });
+    });
+
+    $('.menu-transactions').click(function(e) {
+      e.preventDefault();
+      activeMenu('.menu-transactions');
+      $.ajax({
+        url: '/transactions',
+        method: 'GET',
+        success: function(data, textStatus, jqXHR) {
+          $('#content').html(data);
+        },
+        error: function(jqXHR, textStatus, error) {
+          alert('Произошла ошибка');
+          console.log( error );
+        }
+      });
+    });
+
+    $('.menu-transfer').click(function(e) {
+      e.preventDefault();
+      activeMenu('.menu-transfer');
+      $.ajax({
+        url: '/transfer',
         method: 'GET',
         success: function(data, textStatus, jqXHR) {
           $('#content').html(data);

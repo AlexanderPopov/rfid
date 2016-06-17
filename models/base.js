@@ -10,6 +10,7 @@ var Model = function(tableName, fields, defaults) {
 
 Model.prototype.list = function(cb) {
   var query = 'SELECT * FROM ' + this.tableName;
+
   db.serialize(() => {
     db.all(query, cb);
   });

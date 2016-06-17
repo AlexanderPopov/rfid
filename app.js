@@ -25,7 +25,7 @@ app.get('/', (req, res) => {
     if( err ) {
       res.status(500).send(err);
     } else {
-      res.render('firms', {layout: 'main', regions: regions});
+      res.render('transfer', {layout: 'main', regions: regions});
     }
   });
 });
@@ -102,6 +102,23 @@ app.get('/firms/list', (req, res) => {
   });
 });
 
+app.get('/firm/find', (req, res) => {
+  var account_number = req.query.account_number;
+  if( !account_number ) {
+    res.status(404).send('Нет параметров');
+    return;
+  }
+
+  Firm.find(account_number, (err, firm) => {
+    if( err ) {
+      console.log(err);
+      res.status(500).send(err);
+    } else if(!firm)
+      res.status(404).send('Не найден');
+    else 
+      res.send(firm);
+  });
+});
 
 app.post('/firms/insert', (req, res) => {
   var firm = {};
@@ -138,11 +155,6 @@ app.post('/firms/insert', (req, res) => {
 
 
 app.post('/transaction/insert', (req, res) => {
-	// !base_sum real not null,
-	// !sender_sum real not null,
-	// receiver_sum real not null,
-	// !sender_course real not null,
-	// !receiver_course read not null,
   var tr = {};
   tr.sender = req.body.sender;
   tr.sender_type = req.body.sender_type;
@@ -189,7 +201,11 @@ app.post('/transaction/insert', (req, res) => {
                           Firm.update(receiver, function(err) {
                             if( !err )
                               res.send('OK');
+                            else
+                              res.status(500).send(err);
                           });
+                        else
+                          res.status(500).send(err);
                       });
                     }
                   });
@@ -201,10 +217,26 @@ app.post('/transaction/insert', (req, res) => {
       });
     }
   });
-
-
 });
 
+app.get('/transactions', (req, res) => {
+  res.render('transact');
+});
+
+app.get('/transact/list', (req, res) => {
+  Transaction.list((err, rows) => {
+    if( err ) {
+      console.log(err);
+      res.status(500).send(err);
+    }
+
+    res.send(rows);
+  });
+});
+
+app.get('/transfer', (req, res) => {
+  res.render('transfer');
+});
 
 app.listen(5000, () => {
   console.log('Web-server started on port 5000');

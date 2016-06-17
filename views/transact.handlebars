@@ -1,0 +1,98 @@
+<table id="transact_table">
+</table>
+
+<script>
+  var trans = {};
+  trans.icons = {
+    // ИП
+    0: '<span class="glyphicon glyphicon-wrench"></span> ИП',
+    // ООО
+    1: '<span class="glyphicon glyphicon-wrench"></span> ООО',
+    // МУП
+    2: '<span class="glyphicon glyphicon-wrench"></span> МУП',
+    // Житель
+    10: '<span class="glyphicon glyphicon-user"></span>',
+    // Бюджет 
+    100: '<span class="glyphicon glyphicon-ruble"></span>',
+  };
+
+  $('#transact_table').bootstrapTable({
+    search: true,
+
+    showRefresh: true,
+    showExport: true,
+
+    maintainSelected: true,
+    clickToSelect: true,
+    singleSelect: false,
+    pagination: true,
+    idField: 'id',
+    pageSize: 50,
+    pageList: [10, 50, 100, 'All'],
+
+    columns: [
+      { field: 'dt',
+        title: 'Дата',
+        formatter: function(value, row, index) {
+          return new Date(value).toLocaleString();
+        },
+        width: 170 
+      },
+      { field: 'sender_name',
+        title: 'От кого', width: 250 },
+      { field: 'transaction_type',
+        title: 'Тип транзакции',
+        width: 170,
+        formatter: function(value, row, index) {
+          var icon = '<span>';
+          if( value == 0 )
+            icon = '<span class="label label-warning" title="Оплата услуг">'; 
+          if( value == 1 )
+            icon = '<span class="label label-info" title="Зарплата гос учреждение">'; 
+          if( value == 2 )
+            icon = '<span class="label label-primary" title="Зарплата фирма">'; 
+          if( value == 3 )
+            icon = '<span class="label label-success" title="Выделение из бюджета">'; 
+          if( value == 4 )
+            icon = '<span class="label label-danger" title="Зарплата фирма">'; 
+          if( value == 5 )
+            icon = '<span class="label label-default" title="Налог">'; 
+
+          icon += trans.icons[row.sender_type];
+          if( value == 5 )
+            icon += ' <span class="glyphicon glyphicon-copy"></span> ';
+          icon += ' <span class="glyphicon glyphicon-forward"></span> ';
+          icon += trans.icons[row.receiver_type];
+          icon += '</span>';
+          return icon;
+        }
+      },
+      { field: 'receiver_name',
+        title: 'Кому', width: 250 },
+      { field: 'sum',
+        title: 'Сумма',
+        formatter: function(value, row, index) {
+          return '<span class="label label-primary">'
+            + row.sender_sum + '</span>'
+            + '<span class="label label-success">'
+            + row.base_sum + '</span>'
+            + '<span class="label label-warning">'
+            + row.receiver_sum + '</span>';
+        }
+      },
+      { field: 'coef',
+        title: 'Коэффициент',
+        formatter: function(value, row, index) {
+          return '<span class="label label-primary">'
+            + row.sender_course + '</span>'
+            + '<span class="label label-success">'
+            + '1' + '</span>'
+            + '<span class="label label-warning">'
+            + row.receiver_course + '</span>';
+        }
+      }
+    ],
+    url: '/transact/list'
+  });
+
+</script>

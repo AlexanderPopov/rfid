@@ -1,23 +1,3 @@
-const Model = require('./base');
-
-var Transaction = new Model('transact', [
-  'id',
-  'sender',
-  'sender_type',
-  'receiver',
-  'receiver_type',
-  'dt',
-  'base_sum',
-  'sender_sum',
-  'receiver_sum',
-  'sender_course',
-  'receiver_course',
-  'transaction_type'
-], {});
-
-Transaction.list = function(cb) {
-  var query = 
-  `
 SELECT 
 	t1.*, 
 	CASE
@@ -50,11 +30,3 @@ FROM
 ORDER BY
 	t1.dt DESC
 ;
-  `;
-
-  this.db.serialize(() => {
-    this.db.all(query, cb);
-  });
-};
-
-module.exports = Transaction;

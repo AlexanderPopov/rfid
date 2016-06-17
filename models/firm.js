@@ -16,6 +16,7 @@ Firm.list = function(cb) {
     + ' t1.*, '
     + ' t2.name AS region_name, '
     + ' t2.currency AS region_currency, '
+    + ' t2.coef AS coef, '
     + ' group_concat(t4.name || \' \' || t4.last_name, \';;;\') as cofounders'
     + ' FROM '
     + this.tableName + ' AS t1 '
@@ -41,6 +42,18 @@ Firm.insertCofounders = function(cf, firm_id, cb) {
       stmt.run(firm_id, cofounder.card_id, cofounder.share);
     });
     stmt.finalize(cb);
+  });
+}
+
+Firm.find = function(acc_n, cb) {
+  var query = 'SELECT '
+    + ' * FROM '
+    + this.tableName
+    + ' WHERE '
+    + ' account_number=\'' + acc_n + '\' '
+    + 'LIMIT 1';
+  this.db.serialize(() => {
+    this.db.get(query, cb);
   });
 }
 

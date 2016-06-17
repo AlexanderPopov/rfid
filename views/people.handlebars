@@ -1,4 +1,4 @@
-<div class="pull-left">
+<div class="pull-left manage-buttons">
   <button type="button" class="btn btn-primary" data-toggle="modal" data-target="#citizen-form-modal">
     <span class="glyphicon glyphicon-plus"></span>
     Зарегистрировать
@@ -101,11 +101,26 @@
       { field: 'region_name',
         title: 'Регион' },
       { field: 'region_currency',
-        title: 'Валюта' },
+        title: 'Валюта / <span class="label label-info">Коэффициент</span>',
+        formatter: function(value, row, index) {
+          return value
+            + ' / </span><span class="label label-info">' 
+            + row.coef 
+            + '</span>';
+        }
+      },
       { field: 'account_number',
         title: 'Номер лс' },
       { field: 'account',
-        title: 'На счету <span class="label label-primary">Своя валюта</span>:<span class="label label-success">Базовая валюта</span>' }
+        title: 'На счету <span class="label label-primary">Своя валюта</span><span class="label label-success">Базовая валюта</span>',
+        formatter: function(value, row, index) {
+          return '<span class="label label-primary">' 
+            + (row.coef * value).toFixed(2)
+            + '</span><span class="label label-success">' 
+            + value 
+            + '</span>';
+        } 
+      }
     ],
     url: '/people/list'
   });

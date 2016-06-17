@@ -13,6 +13,7 @@ CREATE TABLE firm (
 	id integer primary key not null,
 	name text not null,
 	account real default 0.0,
+	account_number char(8) not null,
 	region_id integer,
 	type integer,
 
