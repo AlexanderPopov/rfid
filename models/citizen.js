@@ -61,15 +61,15 @@ Citizen.update = function(instance, cb) {
         return item + '=?';
       }).join(',')
     + ' WHERE card_id = ?';
-    var values = this.fields.map((i) => {
-      if( instance[i] !== undefined )
-        return instance[i];
-      if( this.defaults[i] !== undefined )
-        return this.defaults[i];
-      return null;
-    });
-    values.push(instance.card_id);
-    this.db.run(query, values, cb);
+  var values = this.fields.map((i) => {
+    if( instance[i] !== undefined )
+      return instance[i];
+    if( this.defaults[i] !== undefined )
+      return this.defaults[i];
+    return null;
+  });
+  values.push(instance.card_id);
+  this.db.run(query, values, cb);
 };
 
 module.exports = Citizen;

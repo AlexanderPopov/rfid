@@ -1,11 +1,7 @@
 <div class="pull-left manage-buttons">
   <button type="button" class="btn btn-primary" data-toggle="modal" data-target="#citizen-form-modal">
     <span class="glyphicon glyphicon-plus"></span>
-    Зарегистрировать
-  </button>
-  <button type="button" class="btn btn-danger">
-    <span class="glyphicon glyphicon-minus"></span>
-    Удалить
+    Добавить 
   </button>
 </div>
 
@@ -25,44 +21,37 @@
           <form class="form-citizen form-horizontal">
 
             <div class="form-group">
-              <label for="card_id" class="col-sm-2 control-label">Карта</label>
-              <div class="col-sm-8">
-                <input type="text" class="form-control" id="card_id" name="card_id" readonly>
-              </div>
-              <div class="col-sm-2">
-                <button type="button" class="btn btn-success read-card" data-target="#card_id"><span class="glyphicon glyphicon-import"></span></button>
-              </div>
-            </div>
-
-            <div class="form-group">
-              <label for="account_number" class="col-sm-2 control-label">Номер л.с</label>
-              <div class="col-sm-10">
-                <input type="text" class="form-control" name="account_number">
-              </div>
-            </div>
-
-            <div class="form-group">
-              <label for="name" class="col-sm-2 control-label">Имя</label>
+              <label for="name" class="col-sm-2 control-label">Название</label>
               <div class="col-sm-10">
                 <input type="text" class="form-control" name="name">
               </div>
             </div>
 
             <div class="form-group">
-              <label for="last_name" class="col-sm-2 control-label">Фамилия</label>
+              <label for="currency" class="col-sm-2 control-label">Валюта</label>
               <div class="col-sm-10">
-                <input type="text" class="form-control" name="last_name">
+                <input type="text" class="form-control" name="currency">
               </div>
             </div>
 
             <div class="form-group">
-              <label for="region_id" class="col-sm-2 control-label">Регион</label>
+              <label for="coef" class="col-sm-2 control-label">Коэффициент</label>
               <div class="col-sm-10">
-                <select class="form-control" name="region_id">
-                  {{#each regions}}
-                  <option value="{{id}}">{{name}}</option>
-                  {{/each}}
-                </select>
+                <input type="text" class="form-control" name="coef">
+              </div>
+            </div>
+
+            <div class="form-group">
+              <label for="PIT" class="col-sm-2 control-label">Налог НДФЛ</label>
+              <div class="col-sm-10">
+                <input type="text" class="form-control" name="PIT">
+              </div>
+            </div>
+
+            <div class="form-group">
+              <label for="ANP" class="col-sm-2 control-label">Налог ННП</label>
+              <div class="col-sm-10">
+                <input type="text" class="form-control" name="ANP">
               </div>
             </div>
 
@@ -94,38 +83,18 @@
     pageSize: 200,
     pageList: [10, 50, 100, 'All'],
     columns: [
-      { field: 'check',
-        title: '',
-        checkbox: true },
       { field: 'name',
-        title: 'Имя' },
-      { field: 'last_name',
-        title: 'Фамилия' },
-      { field: 'region_name',
-        title: 'Регион' },
-      { field: 'region_currency',
-        title: 'Валюта / <span class="label label-info">Коэффициент</span>',
-        formatter: function(value, row, index) {
-          return value
-            + ' / </span><span class="label label-info">' 
-            + row.coef 
-            + '</span>';
-        }
-      },
-      { field: 'account_number',
-        title: 'Номер лс' },
-      { field: 'account',
-        title: 'На счету <span class="label label-primary">Своя валюта</span><span class="label label-success">Базовая валюта</span>',
-        formatter: function(value, row, index) {
-          return '<span class="label label-primary">' 
-            + (row.coef * value).toFixed(2)
-            + '</span><span class="label label-success">' 
-            + value 
-            + '</span>';
-        } 
-      }
+        title: 'Название' },
+      { field: 'currency',
+        title: 'Валюта' },
+      { field: 'coef',
+        title: 'Коэффициент' },
+      { field: 'PIT',
+        title: 'Налог НДФЛ' },
+      { field: 'ANP',
+        title: 'Налон ННП' },
     ],
-    url: '/people/list'
+    url: '/regions/list'
   });
 
   $('#citizen-save').click(function() {
@@ -137,7 +106,7 @@
     }
     $.ajax({
       method: 'POST',
-      url: '/people/insert',
+      url: '/regions/insert',
       data: data,
       success: function(data, status, jqXHR) {
         $('#citizen-form-modal').modal('hide');

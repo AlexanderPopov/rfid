@@ -1,6 +1,6 @@
 <h4>Все операции производятся в базовой валюте!</h4>
-<form class="form-inline">
-  <div>От кого</div>
+<form class="form-inline" id="transfer_form">
+  <div>Отправитель</div>
   <div class="form-group">
     <select class="form-control" name="sender_type">
       <option>---------</option>
@@ -26,6 +26,7 @@
   </div>
 
   <div class="form-group firm-data">
+    <input type="hidden" class="form-control firm_id" name="firm_id"> 
     <div class="col-sm-9">
       <input type="text" class="form-control account_number" name="account_number" placeholder="Номер счёта" style="width:100%;">
       <div class="help-block firm-help-name" style="display:none;">
@@ -44,7 +45,8 @@
       <option value="2">Зарплата ООО</option>
       <option value="3">Выделение из бюджета</option>
       <option value="4">Перевод частному лицу</option>
-      <option value="5">Налог</option>
+      <option value="5">Налог ННП (Прибыль)</option>
+      <option value="6">Налог НДФЛ (Зарплаты)</option>
     </select>
   </div>
   <div class="form-group">
@@ -52,7 +54,7 @@
   </div>
   <br>
   <br>
-  <div>Кому</div>
+  <div>Получатель</div>
   <div class="form-group">
     <select class="form-control" name="receiver_type">
       <option>---------</option>
@@ -70,6 +72,26 @@
 
 </div>
 
+<div id="transact-modal" class="modal fade" tabindex="-1" role="dialog">
+  <div class="modal-dialog" style="width:90%;">
+    <div class="modal-content">
+      <div class="modal-header">
+        Будут созданы транзакции
+        <button type="button" class="btn btn-success create-transaction"><span class="glyphicon glyphicon-ok"></span> Продолжить</button>
+        <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+        <h4 class="modal-title"></h4>
+      </div>
+
+      <div class="modal-body">
+
+        <table id="transact-table">
+        </table>
+
+      </div>
+
+    </div><!-- /.modal-content -->
+  </div><!-- /.modal-dialog -->
+</div><!-- /.modal -->
 
 
 <script>
@@ -98,7 +120,6 @@
 
         $this.parents('.citizen-data').find('input.account_number').val(data.account_number);
         $this.parents('.citizen-data').find('input.card_id').val(data.card_id);
-
       },
       error: function(jqXHR, textStatus, error) {
         $this.parents('.citizen-data')
@@ -133,6 +154,7 @@
           .text(data.name + ': ' + data.account);
 
         $this.parents('.firm-data').find('input.account_number').val(data.account_number);
+        $this.parents('.firm-data').find('input.firm_id').val(data.id);
       },
       error: function(jqXHR, textStatus, error) {
         $this.parents('.firm-data')
@@ -186,6 +208,165 @@
       },
       error: function(jqXHR, textStatus, error) {
         alert(err);
+      }
+    });
+  });
+
+
+  var validateForm = function(data) {
+  };
+  var trans = {};
+  trans.icons = {
+    // ИП
+    0: '<span class="glyphicon glyphicon-wrench"></span> ИП',
+    // ООО
+    1: '<span class="glyphicon glyphicon-wrench"></span> ООО',
+    // МУП
+    2: '<span class="glyphicon glyphicon-wrench"></span> МУП',
+    // Житель
+    10: '<span class="glyphicon glyphicon-user"></span>',
+    // Бюджет 
+    100: '<span class="glyphicon glyphicon-ruble"></span>',
+  };
+
+  $('#transact-table').bootstrapTable({
+    maintainSelected: true,
+    clickToSelect: true,
+    singleSelect: false,
+    pagination: true,
+    idField: 'id',
+    pageSize: 20,
+    pageList: [10, 20, 50, 100, 'All'],
+    data: [],
+
+    columns: [
+      { field: 'dt',
+        title: 'Дата',
+        formatter: function(value, row, index) {
+          return new Date(value).toLocaleString();
+        },
+        width: 170 
+      },
+      { field: 'sender_name',
+        title: 'От кого', width: 250 },
+      { field: 'transaction_type',
+        title: 'Тип транзакции',
+        width: 170,
+        formatter: function(value, row, index) {
+          var icon = '<span>';
+          if( value == 0 )
+            icon = '<span class="label label-warning" title="Оплата услуг">'; 
+          if( value == 1 )
+            icon = '<span class="label label-info" title="Зарплата гос учреждение">'; 
+          if( value == 2 )
+            icon = '<span class="label label-primary" title="Зарплата фирма">'; 
+          if( value == 3 )
+            icon = '<span class="label label-success" title="Выделение из бюджета">'; 
+          if( value == 4 )
+            icon = '<span class="label label-danger" title="Зарплата фирма">'; 
+          if( value == 5 || value == 6 )
+            icon = '<span class="label label-default" title="Налог">'; 
+
+          icon += trans.icons[row.sender_type];
+          if( value == 5 || value == 6 )
+            icon += ' <span class="glyphicon glyphicon-copy"></span> ';
+          icon += ' <span class="glyphicon glyphicon-forward"></span> ';
+          icon += trans.icons[row.receiver_type];
+          icon += '</span>';
+          return icon;
+        }
+      },
+      { field: 'receiver_name',
+        title: 'Кому', width: 250 },
+      { field: 'sum',
+        title: 'Сумма',
+        formatter: function(value, row, index) {
+          return '<span class="label label-primary">'
+            + row.sender_sum + '</span>'
+            + '<span class="label label-success">'
+            + row.base_sum + '</span>'
+            + '<span class="label label-warning">'
+            + row.receiver_sum + '</span>';
+        }
+      },
+      { field: 'coef',
+        title: 'Коэффициент',
+        formatter: function(value, row, index) {
+          return '<span class="label label-primary">'
+            + row.sender_course + '</span>'
+            + '<span class="label label-success">'
+            + '1' + '</span>'
+            + '<span class="label label-warning">'
+            + row.receiver_course + '</span>';
+        }
+      }
+    ]
+  });
+
+  $('.send-money').click(function(e) {
+    var $this = $(this);
+    var form = $('#transfer_form');
+    var form_data = form.serializeArray();
+    var data = {};
+    for( var i = 0; i < form_data.length; i++ ) {
+      data[form_data[i].name] = form_data[i].value;
+    }
+    var table;
+    if( data.receiver_type < 10 ) {
+      table = $('#firm_table');
+    }
+    else if( data.receiver_type == 10 ) {
+      table = $('#people_table');
+    }
+
+    if( data.sender_type < 10 ) {
+      data.sender = data.firm_id;
+    }
+    else if( data.sender_type == 10 ) {
+      data.sender = data.card_id;
+    }
+
+    if( table )
+      data.receivers = table.bootstrapTable('getSelections');
+    else
+      data.receivers = [{id: 0}];
+
+      data.receiver_count = data.receivers.length;
+    console.log(data);
+
+    $.ajax({
+      method: 'POST',
+      url: '/transact/insert/prepare',
+      data: data,
+      success: function(data, textStatus, jqXHR) {
+        $('#transact-table').bootstrapTable('load', data.transactions);
+        $('#transact-modal').modal().on('hidden.bs.modal', function(e) {
+          $('#transact-table').bootstrapTable('removeAll');
+        });
+        if( data.notEnoughMoney )
+          alert('Баланс отправителя станет отрицательным после проведения операции');
+      },
+      error: function(jqXHR, textStatus, error) {
+        alert(jqXHR.responseText);
+      }
+    });
+
+  });
+
+
+  $('.create-transaction').click(function(e) {
+    e.preventDefault();
+    var transactions = $('#transact-table').bootstrapTable('getData');
+    $.ajax({
+      url: '/transact/insert/many',
+      method: 'POST',
+      data: { transactions: transactions, count: transactions.length },
+      success: function(data, textStatus, jqXHR) {
+        $('#transact-modal').modal('hide')
+        alert('Перевод осуществлён');
+      },
+      error: function(jqXHR, textStatus, error) {
+        alert(jqXHR.responseText);
       }
     });
   });

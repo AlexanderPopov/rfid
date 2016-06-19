@@ -7,6 +7,8 @@ CREATE TABLE region (
 	PIT real not null default 10.0,
 	ANP real not null default 10.0
 );
+INSERT INTO region (name, currency, coef, PIT, ANP)
+VALUES ('Государство', 'Базовая валюта', 1.0, 0.0, 0.0);
 
 DROP TABLE IF EXISTS firm;
 CREATE TABLE firm (
@@ -58,4 +60,14 @@ CREATE TABLE transact (
 	sender_course real not null,
 	receiver_course read not null,
 	transaction_type integer,
+	is_counted boolean not null default false
 );
+
+
+DROP TABLE IF EXISTS budget;
+CREATE TABLE budget (
+	region_id integer not null,
+	account real not null,
+	foreign key(region_id) references region(id)
+);
+INSERT INTO budget values(1, 100000);

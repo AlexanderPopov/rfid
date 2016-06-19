@@ -12,8 +12,9 @@ var Transaction = new Model('transact', [
   'receiver_sum',
   'sender_course',
   'receiver_course',
-  'transaction_type'
-], {});
+  'transaction_type',
+  'is_counted'
+], { is_counted: 'false' });
 
 Transaction.list = function(cb) {
   var query = 
@@ -52,6 +53,78 @@ ORDER BY
 ;
   `;
 
+  this.db.serialize(() => {
+    this.db.all(query, cb);
+  });
+};
+
+Transaction.ANPcount = function(cb) {
+  var query = `
+SELECT 
+	t1.dt, 
+  sum(t1.base_sum),
+	CASE
+		WHEN t1.sender_type = 10 THEN c_s.region_id
+		WHEN t1.sender_type = 0 THEN f_s.region_id
+		WHEN t1.sender_type = 1 THEN f_s.region_id
+		WHEN t1.sender_type = 2 THEN f_s.region_id
+		ELSE 0
+	END AS region
+FROM 
+	transact t1 
+		left join citizen c_s 
+			on c_s.card_id = t1.sender 
+		left join firm f_r 
+			on f_r.id = t1.receiver
+		left join citizen c_r
+			on c_r.card_id = t1.receiver
+		left join firm f_s 
+			on f_s.id = t1.sender
+WHERE
+  transaction_type = 5
+  AND is_counted = 'false' 
+GROUP BY
+  region,
+  t1.dt
+ORDER BY
+	t1.dt DESC
+  `;
+  this.db.serialize(() => {
+    this.db.all(query, cb);
+  });
+};
+
+Transaction.PITcount = function(cb) {
+  var query = `
+SELECT 
+	t1.dt, 
+  sum(t1.base_sum),
+	CASE
+		WHEN t1.sender_type = 10 THEN c_s.region_id
+		WHEN t1.sender_type = 0 THEN f_s.region_id
+		WHEN t1.sender_type = 1 THEN f_s.region_id
+		WHEN t1.sender_type = 2 THEN f_s.region_id
+		ELSE 0
+	END AS region
+FROM 
+	transact t1 
+		left join citizen c_s 
+			on c_s.card_id = t1.sender 
+		left join firm f_r 
+			on f_r.id = t1.receiver
+		left join citizen c_r
+			on c_r.card_id = t1.receiver
+		left join firm f_s 
+			on f_s.id = t1.sender
+WHERE
+  transaction_type = 6
+  AND is_counted = 'false' 
+GROUP BY
+  region,
+  t1.dt
+ORDER BY
+	t1.dt DESC
+  `;
   this.db.serialize(() => {
     this.db.all(query, cb);
   });

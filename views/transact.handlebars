@@ -55,11 +55,11 @@
             icon = '<span class="label label-success" title="Выделение из бюджета">'; 
           if( value == 4 )
             icon = '<span class="label label-danger" title="Зарплата фирма">'; 
-          if( value == 5 )
+          if( value == 5 || value == 6 )
             icon = '<span class="label label-default" title="Налог">'; 
 
           icon += trans.icons[row.sender_type];
-          if( value == 5 )
+          if( value == 5 || value == 6 )
             icon += ' <span class="glyphicon glyphicon-copy"></span> ';
           icon += ' <span class="glyphicon glyphicon-forward"></span> ';
           icon += trans.icons[row.receiver_type];

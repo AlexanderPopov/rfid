@@ -28,7 +28,7 @@
 
     <div class="collapse navbar-collapse" id="bs-example-navbar-collapse-1">
       <ul class="nav navbar-nav">
-        <li class="dropdown menu-item active">
+        <li class="dropdown menu-item">
           <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false">
           <span class="glyphicon glyphicon-transfer"></span> Финансы <span class="caret"></span></a>
           <ul class="dropdown-menu">
@@ -41,29 +41,16 @@
             Жители
             </a>
         </li>
-        <li class="menu-item"><a class="menu-firms" href="#">
+        <li class="menu-item active"><a class="menu-firms" href="#">
             <span class="glyphicon glyphicon-wrench" area-hidden="true"></span> 
             Фирмы
             </a>
         </li>
-        <li class="menu-item"><a href="#"><span class="glyphicon glyphicon-ruble"></span> Бюджет</a></li>
-        <li class="dropdown menu-item">
-          <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false">
-          <span class="glyphicon glyphicon-copy"></span> Налоги <span class="caret"></span></a>
-          <ul class="dropdown-menu">
-            <li><a href="#">Action</a></li>
-            <li><a href="#">Another action</a></li>
-            <li><a href="#">Something else here</a></li>
-            <li role="separator" class="divider"></li>
-            <li><a href="#">Separated link</a></li>
-            <li role="separator" class="divider"></li>
-            <li><a href="#">One more separated link</a></li>
-          </ul>
-        </li>
+        <li class="menu-item"><a class="menu-budget" href="#"><span class="glyphicon glyphicon-ruble"></span> Бюджет</a></li>
       </ul>
 
       <ul class="nav navbar-nav navbar-right">
-        <li><a href="#"><span class="glyphicon glyphicon-home"></span> Регионы</a></li>
+        <li class="menu-item"><a class="menu-regions" href="#"><span class="glyphicon glyphicon-home"></span> Регионы</a></li>
         <li class="dropdown">
           <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false">
             <span class="glyphicon glyphicon-hdd" area-hidden="true"></span> 
@@ -146,6 +133,38 @@
       activeMenu('.menu-transfer');
       $.ajax({
         url: '/transfer',
+        method: 'GET',
+        success: function(data, textStatus, jqXHR) {
+          $('#content').html(data);
+        },
+        error: function(jqXHR, textStatus, error) {
+          alert('Произошла ошибка');
+          console.log( error );
+        }
+      });
+    });
+
+    $('.menu-budget').click(function(e) {
+      e.preventDefault();
+      activeMenu('.menu-budget');
+      $.ajax({
+        url: '/budget',
+        method: 'GET',
+        success: function(data, textStatus, jqXHR) {
+          $('#content').html(data);
+        },
+        error: function(jqXHR, textStatus, error) {
+          alert('Произошла ошибка');
+          console.log( error );
+        }
+      });
+    });
+
+    $('.menu-regions').click(function(e) {
+      e.preventDefault();
+      activeMenu('.menu-regions');
+      $.ajax({
+        url: '/regions',
         method: 'GET',
         success: function(data, textStatus, jqXHR) {
           $('#content').html(data);
