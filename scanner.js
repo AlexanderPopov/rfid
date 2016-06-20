@@ -49,7 +49,7 @@ function findScanner() {
       console.log( 'Error: ', err );
     else if( ports ) {
       ports.forEach((port) => {
-        if( port.manufacturer === '1a86' ) {
+        if( port.manufacturer === '1a86' || port.manufacturer === 'wch.cn' ) {
           ee.emit('found_scanner', port.comName);
         }
       });

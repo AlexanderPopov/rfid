@@ -3,6 +3,10 @@
     <span class="glyphicon glyphicon-plus"></span>
     Добавить 
   </button>
+  <button type="button" class="btn btn-danger countcoef">
+    <span class="glyphicon glyphicon-warning-sign"></span>
+    Рассчитать коэффициенты 
+  </button>
 </div>
 
 <table id="people_table">
@@ -20,6 +24,7 @@
 
           <form class="form-citizen form-horizontal">
 
+            <input type="hidden" class="form-control" name="id">
             <div class="form-group">
               <label for="name" class="col-sm-2 control-label">Название</label>
               <div class="col-sm-10">
@@ -93,8 +98,45 @@
         title: 'Налог НДФЛ' },
       { field: 'ANP',
         title: 'Налон ННП' },
+      { field: 'edit',
+        title: '',
+        formatter: function() {
+          return [
+            '<a class="region-edit" href="javascript:void(0)" title="Редактировать">',
+            '<i class="glyphicon glyphicon-pencil"></i>',
+            '</a>  '
+          ].join('');
+        },
+        events: {
+          'click .region-edit': function(e, value, row, index) {
+            var form = $('.form-citizen');
+            form.find('input[name=id]').val(row.id);
+            form.find('input[name=name]').val(row.name);
+            form.find('input[name=currency]').val(row.currency);
+            form.find('input[name=coef]').val(row.coef);
+            form.find('input[name=PIT]').val(row.PIT);
+            form.find('input[name=ANP]').val(row.ANP);
+
+            $('#citizen-form-modal').modal();
+          }
+        }
+      },
     ],
     url: '/regions/list'
+  });
+
+  $('.countcoef').click(function(e) {
+    e.preventDefault();
+    $.ajax({
+      url: '/budget/calccoef',
+      method: 'POST',
+      success: function(data, textStatus, jqXHR) {
+        $('#people_table').bootstrapTable('refresh');
+      },
+      error: function(jqXHR, textStatus, error) {
+        alert(jqXHR.responseText);
+      }
+    });
   });
 
   $('#citizen-save').click(function() {
@@ -104,13 +146,22 @@
     for( var i = 0; i < form_data.length; i++ ) {
       data[form_data[i].name] = form_data[i].value;
     }
+    console.log(data);
+    var url;
+    if( data.id )
+      url = '/regions/update';
+    else {
+      url = '/regions/insert';
+      delete data.id;
+    }
     $.ajax({
       method: 'POST',
-      url: '/regions/insert',
+      url: url,
       data: data,
       success: function(data, status, jqXHR) {
         $('#citizen-form-modal').modal('hide');
         form[0].reset();
+        form.find('input[name=id]').val('');
         $('#people_table').bootstrapTable('refresh');
       },
       error: function(jqXHR, status, error) {

@@ -1,1 +1,73 @@
-<h4>Денег в бюджете: {{money}}</h4>
+<div class="alert alert-info"><h4>Денег в бюджете: <strong>{{money}}</strong></h4></div>
+
+<div class="col-md-6">
+<h4>Налоговые сборы НДФЛ</h4>
+<table id="PIT">
+</table>
+</div>
+<div class="col-md-6">
+<h4>Налоговые сборы ННП</h4>
+<table id="ANP">
+</table>
+</div>
+
+<script>
+
+  $('#PIT').bootstrapTable({
+    search: true,
+    maintainSelected: true,
+    clickToSelect: true,
+    singleSelect: false,
+    pagination: true,
+    pageSize: 20,
+    showFooter: true,
+    columns: [
+      { field: 'region_name',
+        title: 'Регион',
+        footerFormatter: function(data) {
+          return '<strong>Итого</strong>';
+        }
+      },
+      { field: 'dt',
+        title: 'День' },
+      { field: 'sum',
+        title: 'Сумма',
+        footerFormatter: function(data) {
+          return '<strong>' + data.reduce(function(sum, current) {
+            return sum + current.sum;
+          }, 0) + '</strong>';
+        }
+      }
+    ],
+    url: '/budget/PITcount'
+  });
+
+  $('#ANP').bootstrapTable({
+    search: true,
+    maintainSelected: true,
+    clickToSelect: true,
+    singleSelect: false,
+    pagination: true,
+    pageSize: 20,
+    showFooter: true,
+    columns: [
+      { field: 'region_name',
+        title: 'Регион',
+        footerFormatter: function(data) {
+          return '<strong>Итого</strong>';
+        }
+      },
+      { field: 'dt',
+        title: 'День' },
+      { field: 'sum',
+        title: 'Сумма',
+        footerFormatter: function(data) {
+          return '<strong>' + data.reduce(function(sum, current) {
+            return sum + current.sum;
+          }, 0) + '</strong>';
+        }
+      }
+    ],
+    url: '/budget/ANPcount'
+  });
+</script>

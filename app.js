@@ -204,7 +204,7 @@ app.post('/transaction/insert', (req, res) => {
                     else {
                       Citizen.update(sender, function(err) {
                         if( !err )
-                          Firm.update(receiver, function(err) {
+                          Firm.updateForPension(receiver, tr.base_sum, function(err) {
                             if( !err )
                               res.send('OK');
                             else
@@ -353,6 +353,9 @@ app.post('/transact/insert/many', (req, res) => {
           ReceiverType.get(tr.receiver, function(err, _receiver) {
             _sender.account = parseFloat((_sender.account - parseFloat(tr.base_sum)).toFixed(2));
             _receiver.account = parseFloat((_receiver.account + parseFloat(tr.base_sum)).toFixed(2));
+            if( ReceiverType == Citizen && (tr.transaction_type == 1 || tr.transaction_type == 2) ) {
+              _receiver.pension = parseFloat(_receiver.pension) + parseFloat(tr.base_sum);
+            }
 
             SenderType.update(_sender, function(err) {
               if( !err )
@@ -432,6 +435,83 @@ app.post('/regions/insert', (req, res) => {
     }
     else
       res.send('OK');
+  });
+});
+
+app.post('/regions/update', (req, res) => {
+  Region.update(req.body, (err) => {
+    if( err ) {
+      console.log(err)
+      res.status(500).send(err);
+    }
+    else
+      res.send('OK');
+  });
+});
+
+app.get('/budget/ANPcount', (req, res) => {
+  Transaction.ANPcount(function(err, rows) {
+    if( err )
+      res.status(500).send(err);
+    else
+      res.send(rows);
+  });
+});
+
+app.get('/budget/PITcount', (req, res) => {
+  Transaction.PITcount(function(err, rows) {
+    if( err ) {
+      console.log(err);
+      res.status(500).send(err);
+    }
+    else
+      res.send(rows);
+  });
+});
+
+
+app.post('/budget/calccoef', (req, res) => {
+  Region.list(function(err, regions) {
+    if( err ) {
+      res.status(500).send(err);
+    } else {
+      async.map(regions, function(reg, cb) {
+        Transaction.selectNotCountedSum(reg.id, function(err, tr) {
+          if( err ) return cb(err);
+          else if( !tr ) 
+            tr = {sum:0, region: reg.id}
+          
+          return cb(null, tr);
+        });
+      }, function(err, results) {
+          if( err ) return res.status(500).send(err);
+
+          var sum = results.reduce(function(p, cur) {
+            return parseFloat(p) + parseFloat(cur.sum);
+          }, 0);
+          results = results.map(function(item) {
+            item.coef = (item.sum / (sum / results.length)).toFixed(1);
+            item.coef = parseFloat(item.coef);
+            return item;
+          });
+
+          console.log(results);
+          for( var i = 0; i < regions.length; i++ ) {
+            for( var j = 0; j < results.length; j++ ) {
+              if( results[j].region == regions[i].id )
+                regions[i].coef = results[j].coef;
+            }
+          }
+          console.log(regions);
+          async.mapSeries(regions, function(region, cb) {
+            Region.update(region, cb)
+          }, function(err, results) {
+            if( err ) return res.status(500).send(err);
+            else return res.send('ok');
+          });
+        }
+      );
+    }
   });
 });
 
