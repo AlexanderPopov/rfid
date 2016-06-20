@@ -64,11 +64,15 @@ Model.prototype.insert = function(instance, cb) {
         return this.defaults[i];
       return null;
     });
+
     db.run(query, values, (err) => {
-      if( err )
+      if( err ) {
+        console.log(err);
         cb(err);
-      else
+      }
+      else {
         db.get('SELECT last_insert_rowid() as id', cb);
+      };
     });
   });
 };

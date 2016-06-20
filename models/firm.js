@@ -5,7 +5,8 @@ var Firm = new Model('firm', [
   'name',
   'account',
   'region_id',
-  'type'
+  'type',
+  'account_number'
 ], {
   'account': 0.0,
   'type': 0

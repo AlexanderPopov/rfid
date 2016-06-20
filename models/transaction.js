@@ -1,4 +1,4 @@
-const Model = require('./base');
+﻿const Model = require('./base');
 
 var Transaction = new Model('transact', [
   'id',
@@ -171,6 +171,13 @@ GROUP BY
   this.db.serialize(() => {
     this.db.get(trans_select, [region_id, region_id], cb);
   });
+}
+
+Transaction.updateCounted = function(cb) {
+  var query = `
+    UPDATE transact set is_counted = 'true';
+  `;
+  this.db.run(query, cb);
 }
 
 module.exports = Transaction;

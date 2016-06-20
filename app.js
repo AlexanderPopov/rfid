@@ -1,4 +1,4 @@
-const express = require('express');
+﻿const express = require('express');
 const exphbs = require('express-handlebars');
 var app = express();
 const async = require('async');
@@ -131,6 +131,7 @@ app.post('/firms/insert', (req, res) => {
   firm.type = req.body.type;
   firm.name = req.body.name;
   firm.region_id = req.body.region_id;
+  firm.account_number = req.body.account_number;
   var cofounders = [];
   for( var i = 0; i < 5; i++ ) {
     var key_c = 'cofounders[' + i + '][card_id]';
@@ -328,6 +329,7 @@ app.post('/transact/insert/many', (req, res) => {
       }
     }
   }
+
   async.mapSeries(transactions, function(tr, cb) {
     Transaction.insert(tr, function(err, id ) {
       if( err )
@@ -356,7 +358,6 @@ app.post('/transact/insert/many', (req, res) => {
             if( ReceiverType == Citizen && (tr.transaction_type == 1 || tr.transaction_type == 2) ) {
               _receiver.pension = parseFloat(_receiver.pension) + parseFloat(tr.base_sum);
             }
-
             SenderType.update(_sender, function(err) {
               if( !err )
                 ReceiverType.update(_receiver, function(err) {
@@ -489,25 +490,33 @@ app.post('/budget/calccoef', (req, res) => {
           var sum = results.reduce(function(p, cur) {
             return parseFloat(p) + parseFloat(cur.sum);
           }, 0);
+	  
           results = results.map(function(item) {
-            item.coef = (item.sum / (sum / results.length)).toFixed(1);
+            item.coef = (item.sum / (sum / (results.length - 1))).toFixed(1);
+	    
+	    if( isNaN(item.coef) )
+	      item.coef = 0;
             item.coef = parseFloat(item.coef);
             return item;
           });
 
-          console.log(results);
           for( var i = 0; i < regions.length; i++ ) {
             for( var j = 0; j < results.length; j++ ) {
               if( results[j].region == regions[i].id )
                 regions[i].coef = results[j].coef;
             }
           }
-          console.log(regions);
+ 
           async.mapSeries(regions, function(region, cb) {
             Region.update(region, cb)
           }, function(err, results) {
             if( err ) return res.status(500).send(err);
-            else return res.send('ok');
+            else {
+              Transaction.updateCounted(function(err) {
+                 if( err ) return res.status(500).send(err);
+                 else return res.send('ok');
+	      });
+	    }
           });
         }
       );
